@@ -1,0 +1,28 @@
+{
+  "name": "mc-macros",
+  "version": "0.1.0",
+  "description": "Minecraft Function preprocessor.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js -v test/out test/test0.mcm test/test1.mcm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rasensuihei/mc-macros.git"
+  },
+  "keywords": [
+    "minecraft",
+    "mcfunction",
+    "preprocessor",
+    "transpiler",
+    "compiler",
+    "generator",
+    "macro"
+  ],
+  "author": "rasensuihei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rasensuihei/mc-macros/issues"
+  },
+  "homepage": "https://github.com/rasensuihei/mc-macros#readme"
+}

@@ -1,13 +1,14 @@
 # mc-macros : Minecraft Function Macros
 
 ## Installation
-### github
+### from git
 ```
 git clone git@github.com:rasensuihei/mc-macros.git
 ```
 
 ## Usage
 ```
+cd mc-macros
 node index.js [-v|--verbose] DatapackDir ...InputFiles
 ```
 

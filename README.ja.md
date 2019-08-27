@@ -1,14 +1,18 @@
 # mc-macros : Minecraft Function Macros
 
-[English](README.md)|[日本語](README.ja.md)
+[English](README.md) | [日本語](README.ja.md)
+
+あなたは自分のマクロを手に入れるでしょう。
 
 ## インストールと実行
 実行には Node.js が必要です。
-そのうち npm 登録します。
+```sh
+npm install -g mc-macros
+```
 
 ### 実行
-```
-node index.js [-v|--verbose] DatapackDir ...InputFiles
+```sh
+mcmacros [-v|--verbose] DatapackDir ...InputFiles
 ```
 
 #### DatapackDir
@@ -20,6 +24,7 @@ node index.js [-v|--verbose] DatapackDir ...InputFiles
 #### ``-v`` ``--verbose``
 ``-v`` オプションをつけることでファイルへの出力結果等を表示します。
 
+---
 ## 基本的なマクロ
 これらの基本的なマクロは必ずロードされます。これらは ``defaults.js`` で定義されています。
 

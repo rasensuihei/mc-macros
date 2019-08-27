@@ -1,10 +1,12 @@
 {
   "name": "mc-macros",
-  "version": "0.1.0",
-  "description": "Minecraft Function preprocessor.",
-  "main": "index.js",
+  "version": "0.1.4",
+  "description": "Minecraft Function macro preprocessor.",
+  "bin": {
+    "mcmacros": "bin/mcmacros.js"
+  },
   "scripts": {
-    "test": "node index.js -v test/out test/test0.mcm test/test1.mcm"
+    "test": "node bin/mcmacros.js -v test/out test/test0.mcm test/test1.mcm"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,6 @@
   "bugs": {
     "url": "https://github.com/rasensuihei/mc-macros/issues"
   },
-  "homepage": "https://github.com/rasensuihei/mc-macros#readme"
+  "homepage": "https://github.com/rasensuihei/mc-macros#readme",
+  "dependencies": {}
 }

@@ -10,9 +10,14 @@ exports.directives = {
   require: {
     types: ['string'],
     command: (cx, str) => {
-      const macros = './' + path.dirname(cx.source) + '/' + str + '.js';
-      const mod = require(macros);
-      const dir = mod.directives
+      const progDir = path.dirname(require.main.filename);
+      const macroDir = path.relative(progDir, path.dirname(cx.source));
+      const macroFile = path.join(macroDir, path.join(str + '.js'));
+      if (cx.settings.verbose) {
+        console.log('Require: ' + macroFile);
+      }
+      const mod = require(macroFile);
+      const dir = mod.directives;
       const init = mod.init;
       if (init) {
         init(cx);

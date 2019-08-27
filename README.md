@@ -1,15 +1,19 @@
 # mc-macros : Minecraft Function Macros
 
-[English](README.md)|[日本語](README.ja.md)
+[English](README.md) | [日本語](README.ja.md)
+
+You'll get macros of your own.
 
 ## Installation
 Node.js is required for execution.
 
-I will Register npm as someday.
+```sh
+npm install -g mc-macros
+```
 
 ### Run
-```
-node index.js [-v | --verbose] DatapackDir ... InputFiles
+```sh
+mcmacros [-v | --verbose] DatapackDir ... InputFiles
 ```
 
 #### DatapackDir
@@ -21,6 +25,7 @@ Specifies one or more input files. Input files are always processed in the order
 #### `` -v`` `` --verbose``
 Output result to a file is displayed by adding `` -v`` option.
 
+---
 ## Basic macro
 These basic macros are always loaded. These are defined in `` defaults.js``.
 

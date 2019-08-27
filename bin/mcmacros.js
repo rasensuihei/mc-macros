@@ -1,8 +1,9 @@
+#!/usr/bin/env node
+
 const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 const DefaultDirectives = require('./defaults.js').directives;
-
 
 class MacroError extends Error {
   constructor(cx, message) {
@@ -455,7 +456,7 @@ async function main() {
   const settings = new PreprocessSettings();
   const argv = process.argv.slice(2);
   function printUsage() {
-    console.log('mc-macros [-v|--verbose] DatapackDir ...InputFiles');
+    console.log('mcmacros [-v|--verbose] DatapackDir ...InputFiles');
   };
   function writeFiles(builders) {
     console.log('');

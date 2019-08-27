@@ -48,7 +48,8 @@ When this macro is expanded, the following mcfuncion will probably be output.
 
 ```mcfunction
 function sweden: anon/0_0
-
+```
+```mcfunction
 # ========================================
 # data/sweden/functions/anon/0_0.mcfunction
 say Mojang.
@@ -63,23 +64,23 @@ execute as @e[tag=Adios] at @s run anon
 ```
 
 To execute a command source given to an anonymous function,
-You can process `` @e[tag=Bye] `` only once.
+You can process `` @e[tag=Adios] `` only once.
 
 #### recursive
 Within an anonymous function block, `` recursive`` can recursively execute itself.
 ```mcfunction
-execute positioned ~ ~ ~ as @e[type=cow, limit=1, sort=nearest] run anon
+execute as @e[type=cow,limit=1,sort=nearest] run anon
   execute store result score @p tmp run data get entity @s Health
   scoreboard players operation @p HealthCount += @p tmp
   kill @s
-  execute if score @p HealthCount matches ..100 as @e[type=cow, limit=1, sort=nearest] run recursive
+  execute if score @p HealthCount matches ..100 as @e[type=cow,limit=1,sort=nearest] run recursive
 ```
 
 In this example, the health of the bulls to be killed is counted and killed one by one until the total reaches 100 or more.
 
 ### mcfunction
 Switches the mcfunction file to be output.
-If the namespace is omitted, the value specified by `` namespace`` is used.
+If the namespace is omitted, the value specified by ``namespace`` is used.
 
 ```mcfunction
 namespace foo

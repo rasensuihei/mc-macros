@@ -47,7 +47,8 @@ anon
 
 ```mcfunction
 function sweden:anon/0_0
-
+```
+```mcfunction
 # ========================================
 # data/sweden/functions/anon/0_0.mcfunction
 say Mojang.
@@ -62,12 +63,12 @@ execute as @e[tag=Adios] at @s run anon
 ```
 
 コマンドソースを匿名ファンクションに与えて実行するため、
-``@e[tag=Bye]`` の処理を一回だけで済ませることができます。
+``@e[tag=Adios]`` の処理を一回だけで済ませることができます。
 
 #### recursive
 匿名ファンクションのブロック内では ``recursive`` によって自身を再帰実行できます。
 ```mcfunction
-execute positioned ~ ~ ~ as @e[type=cow,limit=1,sort=nearest] run anon
+execute as @e[type=cow,limit=1,sort=nearest] run anon
   execute store result score @p tmp run data get entity @s Health
   scoreboard players operation @p HealthCount += @p tmp
   kill @s
@@ -145,7 +146,7 @@ https://github.com/rasensuihei/mc-macros/blob/master/test/mymacros.js
 
 ```javascript
 exports.init = cx => {
-  cx.appendInitialCommand(`execute unless entity ${StoreEntity} run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}`);
+  cx.appendInitialCommand('execute unless entity 0-0-0-0-0 run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}');
 };
 ```
 

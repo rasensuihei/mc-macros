@@ -4,8 +4,7 @@ exports.directives = {
   namespace: {
     types: ['string'],
     command: (cx, str) => {
-      cx.namespace = str
-      cx.setInitialFunction(cx.namespace, 'init')
+      cx.namespace = str;
     }
   },
   require: {
@@ -24,29 +23,42 @@ exports.directives = {
     }
   },
   mcfunction: {
-    command: (cx, words) => {
-      const args = words.split(':');
-      if (args.length == 1) {
-        cx.switchFunction(cx.namespace, words);
-      } else if (args.length == 2) {
-        cx.switchFunction(args[0], args[1]);
-      }
+    types: ['string'],
+    command: (cx, arg) => {
+      // switch the output mcfunction file.
+      let [ns, name] = cx.splitFunctionName(arg);
+      cx.switchFunction(ns, name);
+      // datapack tags
+      cx.node.args.slice(1).forEach(tag => {
+        if (tag == 'load' || tag == 'tick') {
+          if (tag == 'load' && !cx.hasInitialFunction()) {
+            cx.setInitialFunction(ns, name);
+          }
+          const values = cx.settings.datapack[tag].data.values;
+          if (values.indexOf(cx.currentFunction) == -1) {
+            values.push(cx.currentFunction);
+          }
+        } else {
+          throw cx.createError('Unknown tag: "' + tag + '"');
+        }
+      });
     }
   },
   anon: {
     blockBegin: cx => cx.enterAnonymousFunction(),
     blockEnd: cx => cx.exitFunction()
   },
-  datapacktag: {
-    command: (cx, words) => {
-      if (words == 'load' || words == 'tick') {
-        const values = cx.settings.datapack[words].data.values;
-        if (values.indexOf(cx.currentFunction) == -1) {
-          values.push(cx.currentFunction);
-        }
+  recursive: {
+    command: cx => {
+      if (cx.isInAnonymousFunction()) {
+        cx.appendLine('function', cx.currentFunction);
       } else {
-        throw new Error('Unknown tag: "' + words + '"');
+        throw cx.createError('Recursive only inside anonymous functions.');
       }
     }
+  },
+  define: {
+    types: ['string', 'string'],
+    command: (cx, name, value) => cx.scope[name] = value
   }
 };

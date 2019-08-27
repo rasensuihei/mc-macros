@@ -1,20 +1,23 @@
 # Default function namespace. IMPORTANT
 namespace test
+
+# ========================================
+# Switch the output mcfunction file.
+mcfunction init load
+
 # Macro module paths are resolved reative to this file.
 # require('./mymacros.js') # like this.
 require mymacros
 
-# ========================================
-# Switch the output mcfunction file.
-mcfunction init
-datapacktag load
+setworldspawn 0 4 0
 scoreboard objectives add tmp dummy
 scoreboard objectives add score1 dummy
 scoreboard objectives add score2 dummy
 
+say Loaded.
+
 # ========================================
-mcfunction mytick
-datapacktag tick
+mcfunction mytick tick
 # greeting Ticking.
 
 # ========================================
@@ -33,10 +36,11 @@ execute as @e[tag=target1] run anon
 # Back to 'test:subdir/test.mcfunction'.
 greeting I'm back.
 
-op 0-0-0-0-0 score1 += 0-0-0-0-0 score2
-
-# 100 is initialize automatically.
-op 0-0-0-0-0 score1 += 100
+# Template literal and Operations.
+define DataStore 0-0-0-0-0
+op ${DataStore} score1 += ${DataStore} score2
+# 100 will be automatically initialized.
+op ${DataStore} score1 += 100
 
 # Loop with scoreboard.
 repeat 10
@@ -44,7 +48,7 @@ repeat 10
 
 # Featured ES2015/ES6 Template literal.
 # This macro will be expanded.
-exp-repeat 10
+exp-repeat 10 20
   greeting The value of the square of ${count} is ${count*count}.
 
 # Anonymous function with the command source.

@@ -3,6 +3,14 @@ const readline = require('readline');
 const path = require('path');
 const DefaultDirectives = require('./defaults.js').directives;
 
+
+class MacroError extends Error {
+  constructor(cx, message) {
+    super(`${message} (${cx.source}:${cx.node.lineNo})`);
+    this.cx = cx;
+  }
+}
+
 class TextBuilder {
   constructor() {
     this.text = '';
@@ -35,10 +43,29 @@ class PreprocessContext {
     Object.assign(this.directives, DefaultDirectives);
   }
 
+  createError(...messages) {
+    return new MacroError(this, messages.join(' '));
+  }
+
+  resolve(ns, name) {
+    return (ns ? ns : this.namespace) + ':' + name;
+  }
+
+  splitFunctionName(func) {
+    const array = func.split(':');
+    if (array.length == 1) {
+      return [this.namsspace, func];
+    } else if (array.length == 2) {
+      return array;
+    }
+    throw new Error(`Illegal function name: ${func}`);
+  }
+
   _getBuilder(ns, name) {
-    this.currentFunction = ns + ':' + name;
+    const namespace = ns ? ns : this.namespace;
+    this.currentFunction = this.resolve(namespace, name);
     const filename = name + '.mcfunction';
-    const file = path.join(this.dataDir, ns, 'functions', filename);
+    const file = path.join(this.dataDir, namespace, 'functions', filename);
     this._builder = this.builders[file];
     if (!this._builder) {
       this._builder = new TextBuilder();
@@ -51,19 +78,11 @@ class PreprocessContext {
     const defined = this.settings.scores[name];
     if (!defined) {
       this.settings.scores[name] = true;
-      this.appendInitialCommand('scoreboard', `objectives add ${name} dummy`)
+      this.appendInitialCommand(`scoreboard objectives add ${name} dummy`)
       return true;
     }
     return false;
   }
-
-  // addConstant(name, value) {
-  //   if (this.addScore('_const_' + name)) {
-  //     this.appendInitialCommand('scoreboard', `players set _const_${name} ${value}`);
-  //     return true;
-  //   }
-  //   return false;
-  // }
 
   enterScope() {
     const newScope = {};
@@ -81,11 +100,21 @@ class PreprocessContext {
   }
 
   setInitialFunction(ns, name) {
-    this.switchFunction(ns, name);
-    this._initialFunctionBuilder = this._builder;
+    this._initialFunctionBuilder = this._getBuilder(ns, name);
+  }
+
+  hasInitialFunction() {
+    return this._initialFunctionBuilder != null;
+  }
+
+  isInAnonymousFunction() {
+    return this._functionStack.length > 0;
   }
 
   switchFunction(ns, name) {
+    if (this.isInAnonymousFunction()) {
+      throw this.createError('Cannot escape globally from within anonymous functions.');
+    }
     this._builder = this._getBuilder(ns, name);
   }
 
@@ -100,19 +129,22 @@ class PreprocessContext {
 
   enterAnonymousFunction() {
     const anonymousName = this.nextAnonymousName();
-    this.appendLine('function', this.namespace + ':' + anonymousName);
+    this.appendLine('function', this.resolve(this.namespace, anonymousName));
     this.enterFunction(this.namespace, anonymousName);
   }
 
-  appendInitialCommand(command, words) {
-    this._initialFunctionBuilder.append(command + ' ' + words + '\n');
+  appendInitialCommand(...str) {
+    if (this._initialFunctionBuilder) {
+      this._initialFunctionBuilder.append(str.join(' ') + '\n');
+    } else {
+      throw this.createError('No function tagged with "load", e.g. "mcfunction load load".');
+    }
   }
 
   append(...str) {
-    // TODO Need a kaizen.
     const text = str.join(' ');
     const keys = Object.keys(this.scope);
-    if (keys.length > 0) {
+    if (keys.length > 0 && text.indexOf('$') > -1) {
       const values = Object.keys(this.scope).map(key => this.scope[key]);
       const template = new Function(...keys, 'return `' + text + '`;');
       this._builder.append(template.apply(null, values));
@@ -184,10 +216,13 @@ class Preprocessor {
           if (dir.blockBegin) {
             dir.blockBegin.apply(null, args);
           }
-          do {
-            // Recursive process.
+          if (dir.blockRepeat) {
+            while(dir.blockRepeat.apply(null, args)) {
+              this._processNode(node);
+            }
+          } else {
             this._processNode(node);
-          } while(dir.repeat && dir.repeat.apply(null, args));
+          }
           if (dir.blockEnd) {
             dir.blockEnd.apply(null, args);
             this.cx.exitScope();

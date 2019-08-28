@@ -1,12 +1,14 @@
 {
   "name": "mc-macros",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Minecraft Function macro preprocessor.",
   "bin": {
     "mcmacros": "bin/mcmacros.js"
   },
   "scripts": {
-    "test": "node bin/mcmacros.js -v test/out test/test0.mcm test/test1.mcm"
+    "test": "node bin/mcmacros.js -v test/out test/test0.macro.mcfunction test/test1.macro.mcfunction",
+    "lint": "eslint --ext .js --ignore-path .gitignore .",
+    "fix": "eslint --fix --ext .js --ignore-path .gitignore ."
   },
   "repository": {
     "type": "git",
@@ -27,5 +29,13 @@
     "url": "https://github.com/rasensuihei/mc-macros/issues"
   },
   "homepage": "https://github.com/rasensuihei/mc-macros#readme",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
 }

@@ -39,8 +39,8 @@ namespace foo
 ### anon (anonymous function)
 In the Minecraft function, when you want to express the control structure, you need to create a mcfunction file with a name for the structure, which makes editing very complicated.
 
-By using the `` anon`` macro and indent blocking instead of the `` function ...`` command,
-The contents of the block are output to another mcfunction file and expanded as a command that will be executed.
+By using the ``anon`` macro and indent blocking instead of the ``function ...`` command, The contents of the block are output to another mcfunction file and expanded as a command that will be executed.
+
 The function namespace is the value specified by the `` namespace`` macro.
 
 ```mcfunction
@@ -68,8 +68,7 @@ execute as @e[tag=Adios] at @s run anon
   tp @s ~ ~ 100 ~
 ```
 
-To execute a command source given to an anonymous function,
-You can process `` @e[tag=Adios] `` only once.
+Since the command source is given to the anonymous function and executed, ``@e[tag=Adios]`` can be processed only once.
 
 #### recursive
 Within an anonymous function block, `` recursive`` can recursively execute itself.
@@ -108,16 +107,14 @@ mcfunction mytick tick
 mcfunction myloadandtick load tick
 
 ```
-By specifying the function tag in the data pack following the function name
- ``load`` and ``init`` are
-Registered in ``load.json`` and ``tick.json`` of ``data/minecraft/tags/functions``.
+By specifying the function tag in the data pack following the function name, ``load`` and ``init`` are registered in ``load.json`` and ``tick.json`` of ``data/minecraft/tags/functions`` respectively.
 
 When using a macro that uses the initialization function, the function registered in `` load`` is required.
 
 If a tagged function is no longer needed, it must be corrected manually.
 
 ### define
-Set a variable in the current scope of the preprocessor.
+Sets a key and value in the current scope of the preprocessor.
 This makes the string template using the Template Literal of ES2015/ES6 work.
 
 ```mcfunction
@@ -152,8 +149,8 @@ Set a function to expand the initialization command in `` exports.init``.
 
 ```javascript
 exports.init = cx => {
-  cx.appendInitialCommand('execute unless entity 0-0-0-0-0 run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}');
-};
+  cx.appendInitialCommand ('execute unless entity 0-0-0-0-0 run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}')
+}
 ```
 
 ### directive
@@ -161,9 +158,9 @@ Set the directives dictionary array to `` exports.directives``.
 
 ```javascript
 directives ['greeting'] = {
-    command: (cx, words) => cx.appendLine('say', words)
-};
-exports.directives = directives;
+  command: (cx, words) => cx.appendLine ('say', words)
+}
+exports.directives = directives
 ```
 
 #### Parameter type

@@ -38,8 +38,8 @@ namespace foo
 ### anon (匿名ファンクション)
 Minecraft ファンクションでは制御構造を表現したい時に構造に名前を付けて mcfunction ファイルを作成する必要があり、編集が非常に煩雑になります。
 
-``function ...`` コマンドではなく ``anon`` マクロとインデントによるブロック化を使用することで、
-ブロックの内容を別の mcfunction ファイルに出力し、実行されるコマンドとして展開されます。
+``function ...`` コマンドではなく ``anon`` マクロとインデントによるブロック化を使用することで、ブロックの内容を別の mcfunction ファイルに出力し、実行されるコマンドとして展開されます。
+
 ファンクションの名前空間には ``namespace`` マクロで指定された値が使われます。
 
 ```mcfunction
@@ -67,8 +67,7 @@ execute as @e[tag=Adios] at @s run anon
   tp @s ~ ~100 ~
 ```
 
-コマンドソースを匿名ファンクションに与えて実行するため、
-``@e[tag=Adios]`` の処理を一回だけで済ませることができます。
+コマンドソースを匿名ファンクションに与えて実行するため、``@e[tag=Adios]`` の処理を一回だけで済ませることができます。
 
 #### recursive
 匿名ファンクションのブロック内では ``recursive`` によって自身を再帰実行できます。
@@ -107,16 +106,14 @@ mcfunction mytick tick
 mcfunction myloadandtick load tick
 
 ```
-ファンクション名に続いてデータパックにおけるファンクションのタグを指定することで
- ``load`` と ``init`` はそれぞれが
-``data/minecraft/tags/functions`` の ``load.json`` と ``tick.json`` に登録されます。
+ファンクション名に続いてデータパックにおけるファンクションのタグを指定することで ``load`` と ``init`` はそれぞれが ``data/minecraft/tags/functions`` の ``load.json`` と ``tick.json`` に登録されます。
 
 初期化機能を使用したマクロを利用する場合、``load`` に登録したファンクションは必須です。
 
 タグ付けされたファンクションが不要になった場合、手動で修正する必要があります。
 
 ### define
-プリプロセッサの現在のスコープに変数をセットします。
+プリプロセッサの現在のスコープにキーと値をセットします。
 これにより ES2015/ES6 の Template Literal を使った文字列テンプレートが機能します。
 
 ```mcfunction
@@ -151,8 +148,8 @@ https://github.com/rasensuihei/mc-macros/blob/master/test/mymacros.js
 
 ```javascript
 exports.init = cx => {
-  cx.appendInitialCommand('execute unless entity 0-0-0-0-0 run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}');
-};
+  cx.appendInitialCommand ('execute unless entity 0-0-0-0-0 run summon minecraft:armor_stand ~ ~ ~ {UUIDMost: 0L, UUIDLeast: 0L, Marker: 1b}')
+}
 ```
 
 ### ディレクティブ
@@ -160,9 +157,9 @@ exports.init = cx => {
 
 ```javascript
 directives['greeting'] = {
-    command: (cx, words) => cx.appendLine('say', words)
-};
-exports.directives = directives;
+  command: (cx, words) => cx.appendLine ('say', words)
+}
+exports.directives = directives
 ```
 
 #### パラメータタイプ

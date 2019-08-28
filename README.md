@@ -119,11 +119,11 @@ This makes the string template using the Template Literal of ES2015/ES6 work.
 
 ```mcfunction
 define foo bar
-say $ {foo}.
+say ${foo}.
 # => say bar.
 
 define num 10
-say $ {num * num}.
+say ${num * num}.
 # => say 100.
 ```
 

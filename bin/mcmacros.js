@@ -76,7 +76,7 @@ class PreprocessContext {
     return this._builder
   }
 
-  addScore (name) {
+  initObjective (name) {
     const defined = this.settings.scores[name]
     if (!defined) {
       this.settings.scores[name] = true
@@ -109,10 +109,6 @@ class PreprocessContext {
     return this._initialFunctionBuilder !== null
   }
 
-  isInAnonymousFunction () {
-    return this._functionStack.length > 0
-  }
-
   switchFunction (ns, name) {
     if (this.isInAnonymousFunction()) {
       throw this.createError('Cannot escape globally from within anonymous functions.')
@@ -133,6 +129,11 @@ class PreprocessContext {
     const anonymousName = this.nextAnonymousName()
     this.appendLine('function', this.resolve(this.namespace, anonymousName))
     this.enterFunction(this.namespace, anonymousName)
+    return anonymousName
+  }
+
+  isInAnonymousFunction () {
+    return this._functionStack.length > 0
   }
 
   appendInitialCommand (...str) {
@@ -163,6 +164,7 @@ class PreprocessContext {
 const ArgumentParser = {
   string: x => x,
   bool: x => x !== 'false',
+  number: x => Number(x),
   float: x => parseFloat(x),
   int: x => parseInt(x),
   json: x => JSON.parse(x),

@@ -38,7 +38,7 @@ namespace foo
 ### anon (匿名ファンクション)
 Minecraft ファンクションでは制御構造を表現したい時に構造に名前を付けて mcfunction ファイルを作成する必要があり、編集が非常に煩雑になります。
 
-``function ...`` コマンドではなく ``anon`` マクロとインデントによるブロック化を使用することで、ブロックの内容を別の mcfunction ファイルに出力し、実行されるコマンドとして展開されます。
+``function ...`` コマンドではなく ``anon`` マクロとインデントによるブロック化を使用すると、ブロックの内容を別の mcfunction ファイルに出力し、そのファンクションが実行されるように展開されます。
 
 ファンクションの名前空間には ``namespace`` マクロで指定された値が使われます。
 
@@ -69,8 +69,8 @@ execute as @e[tag=Adios] at @s run anon
 
 コマンドソースを匿名ファンクションに与えて実行するため、``@e[tag=Adios]`` の処理を一回だけで済ませることができます。
 
-#### recursive
-匿名ファンクションのブロック内では ``recursive`` によって自身を再帰実行できます。
+### recursive
+匿名ファンクションのブロック内部で ``recursive`` によって自身を再帰実行できます。
 ```mcfunction
 execute as @e[type=cow,limit=1,sort=nearest] run anon
   execute store result score @p tmp run data get entity @s Health
@@ -96,6 +96,28 @@ say Bar.
 mcfunction sweden:mojang
 say Mojang.
 ```
+
+### switch and case
+``switch`` と ``case`` 及びその内部ブロックをN分探索木として展開します。
+
+``switch targets objective n``
+
+``n`` を省略した場合はデフォルト値の 2 (二分探索)が使われます。
+
+```mcfunction
+switch @s tmp
+  case 0
+    say Result is zero.
+  case 1..2
+    say Result is 1 to 2.
+  case 3..
+    say Result is 3 or more.
+```
+
+注意点
+* ``case`` の値は小さい値から大きい値に順序づけてされている必要があります。
+* 再帰できません。
+* ブロック内部でスコアを変更したい場合は値のコピーを作成する必要があります。
 
 #### ファンクションタグの指定
 ```mcfunction
@@ -126,10 +148,10 @@ say ${num*num}.
 # => say 100.
 ```
 
-テンプレート文字列はコマンドマクロの出力時に処理されるため、マクロ内で値を内部処理するようなパラメータに ``define`` された値を与えた場合予期しない結果になります。
+テンプレート文字列はコマンドマクロの出力時に処理されるため、マクロ内で値を内部処理するようなパラメータに ``define`` された値を与えた場合、予期しない結果になります。
 
 ### require
-入力ファイルごとにマクロモジュールを追加することができます。
+入力ファイルごとにマクロモジュールをいくつでも追加することができます。
 
 ```mcfunction
 require mymacros
@@ -139,11 +161,12 @@ require mymacros
 
 ---
 ## マクロモジュール
+初期化関数やマクロ関数をモジュールにすることで ``require`` によるインポートが可能になります。
 
 定義例を参考にして下さい。
 https://github.com/rasensuihei/mc-macros/blob/master/test/mymacros.js
 
-### 初期化
+### 初期化関数
 ``exports.init`` に初期化用コマンドを展開する関数を設定します。
 
 ```javascript
@@ -152,24 +175,61 @@ exports.init = cx => {
 }
 ```
 
-### ディレクティブ
-``exports.directives`` にディレクティブの辞書配列を設定します。
+### マクロ関数
+``exports.directives`` にマクロ関数を設定します。
 
 ```javascript
+const directives = {}
 directives['greeting'] = {
   command: (cx, words) => cx.appendLine ('say', words)
 }
 exports.directives = directives
 ```
 
-#### パラメータタイプ
+#### マクロ関数のパラメータ型
 ディレクティブに ``types`` を指定することでマクロが受けとるパラメータの型を指定できます。
-これらは 'int', 'float', 'string', 'bool', 'json', 'expr' の任意の配列になります。
+これらは 'number', 'int', 'float', 'string', 'bool', 'json', 'expr' の任意の配列になります。
 
 ``types`` を省略した場合、コマンド名を除いたテキスト行の文字列がパラメータになります。
 
+```javascript
+directives['calc'] = {
+  types: ['number', 'string', 'number'],
+  command: (cx, left, op, right) => {
+    if (op === '+') {
+      cx.appendLine ('say', left + right)
+    }
+  }
+}
+```
+
 #### ハンドラ関数
-* command: コマンドマクロ展開のハンドラ
-* blockBegin: ブロック開始のハンドラ
-* blockRepeat: ブロックをリピートするハンドラ
-* blockEnd: ブロック終了のハンドラ
+マクロコマンドは最初に ``command`` が呼ばれ、マクロコマンドの次の行にインデントされたブロックがあれば ``blockBegin``、``blockRepeat``、``blockEnd``が順番に実行されます。
+
+全てのハンドラは省略可能です。
+
+| 名前 | 説明 |
+|-|-|
+| command | 基本的なコマンドマクロのハンドラです。ブロックのあるなしにかかわらず必ず最初に実行します。|
+| blockBegin | ブロックのマクロ展開を開始する前に実行されるハンドラです。|
+| blockRepeat | ブロックのマクロを展開する前に実行され、true を返す限りブロックをリピートし続けるハンドラです。省略した場合ブロックは必ず 1 回だけ展開されます。|
+| blockEnd | ブロックのマクロ展開が終了すると一回だけ呼ばれるハンドラです。|
+
+### PreprocessContext クラス
+ディレクティブの具体的な機能は PreprocessContext オブジェクトを操作することで実装できます。
+
+コンテキストにおけるブロック、ファンクション、文字列展開用のスコープは互いに無関係である点に注意して下さい。
+
+| メソッド | 説明 |
+|-|-|
+| append(...str) | 現在のファンクションに文字列を追加します。複数の引数であれば ``join(' ')`` されます。改行は行いません。|
+| appendLine(...str) | 現在のファンクションに文字列と改行を追加します。|
+| appendInitialCommand(...str) | 設定された初期化用ファンクションに文字列と改行を追加します。|
+| enterScope() | プリプロセッサの新しいスコープを作成しスタックします。|
+| exitScope() | プリプロセッサの現在のスコープを終了します。|
+| _boolean_ initObjective(name) | スコアボートのオブジェクティブ ``name`` を初期化します。|
+| enterFunction(ns, name) | 指定した名前空間と名前でファンクションを作成しスタックします。|
+| _string_ enterAnonymousFunction() | 匿名ファンクションを作成してスタックします。終了するときは exitFunction() を使用します。|
+| exitFunction() | 現在のファンクションを終了します。|
+
+

@@ -130,7 +130,7 @@ say ${num * num}.
 The template string is processed when the command macro is output, so if you give a ``define`` value to a parameter that internally processes the value in the macro, you will get unexpected results.
 
 ### require
-Macro modules can be added for each input file.
+You can add macro modules for each input file.
 
 ```mcfunction
 require mymacros
@@ -140,12 +140,13 @@ This example configures the preprocessor to use the mymacros.js macro module in 
 
 ---
 ## Macro module
+Importing with ``require`` is possible by making initialization functions and macro functions into modules.
 
 Please refer to the definition example.
 https://github.com/rasensuihei/mc-macros/blob/master/test/mymacros.js
 
 ### Initialize
-Set a function to expand the initialization command in `` exports.init``.
+Set a function to expand the initialization command in ``exports.init``.
 
 ```javascript
 exports.init = cx => {
@@ -153,8 +154,8 @@ exports.init = cx => {
 }
 ```
 
-### directive
-Set the directives dictionary array to `` exports.directives``.
+### Directive
+Set the directives to `` exports.directives``.
 
 ```javascript
 directives ['greeting'] = {
@@ -165,9 +166,20 @@ exports.directives = directives
 
 #### Parameter type
 By specifying `` types`` in the directive, you can specify the parameter types that the macro receives.
-These can be any arrays of 'int', 'float', 'string', 'bool', 'json', 'expr'.
+These can be any arrays of 'number', 'int', 'float', 'string', 'bool', 'json', 'expr'.
 
 If `` types`` is omitted, the character string of the text line excluding the command name becomes the parameter.
+
+```javascript
+directives['calc'] = {
+  types: ['number', 'string', 'number'],
+  command: (cx, left, op, right) => {
+    if (op === '+') {
+      cx.appendLine ('say', left + right)
+    }
+  }
+}
+```
 
 #### handler function
 * command: Command macro expansion handler

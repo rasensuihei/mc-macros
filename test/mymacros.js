@@ -8,7 +8,7 @@
 const StoreEntity = '0-0-0-0-0'
 
 function addConstant (cx, name, value) {
-  if (cx.addScore('mcm.const.' + name)) {
+  if (cx.initObjective('mcm.const.' + name)) {
     cx.appendInitialCommand(`scoreboard players set ${StoreEntity} mcm.const.${name} ${value}`)
   }
 }
@@ -18,12 +18,6 @@ exports.init = cx => {
 }
 
 const directives = {
-  var: {
-    types: ['string'],
-    command: (cx, name) => {
-      cx.appendInitialCommand(`scoreboard objectives add ${name} dummy`)
-    }
-  },
   const: {
     types: ['string', 'string'],
     command: (cx, name, value) => {
@@ -73,7 +67,7 @@ const directives = {
   repeat: {
     types: ['int'],
     command: (cx, n) => {
-      cx.addScore('mcm.repeat.var')
+      cx.initObjective('mcm.repeat.var')
       cx.appendLine(`scoreboard players set ${StoreEntity} mcm.repeat.var 0`)
       cx.enterAnonymousFunction()
     },
@@ -83,7 +77,7 @@ const directives = {
       cx.exitFunction()
     }
   },
-  'exp-repeat': {
+  exp_repeat: {
     types: ['int', 'int'],
     blockBegin: (cx, a, b) => {
       // 'count' will expand to template literal.
@@ -109,10 +103,9 @@ const directives = {
       cx.exitFunction()
     }
   },
-  'exp-foreach': {
+  exp_foreach: {
     types: ['json'],
     blockBegin: (cx, array) => {
-      // 'count' will expand to template literal.
       cx.scope.count = 0
       cx.scope.item = array[cx.scope.count]
     },

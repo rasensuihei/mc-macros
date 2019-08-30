@@ -48,7 +48,7 @@ repeat 10
 
 # Featured ES2015/ES6 Template literal.
 # This macro will be expanded.
-exp-repeat 10 20
+exp_repeat 10 20
   greeting The value of the square of ${count} is ${count*count}.
 
 # Anonymous function with the command source.
@@ -62,5 +62,40 @@ foreach @e[tag=WillDie]
   kill @s
 
 # Expand the JSON array.
-exp-foreach ["foo", "bar", "baz"]
+exp_foreach ["foo", "bar", "baz"]
   greeting ${item}
+
+init_objective tmp1
+init_objective tmp2
+
+# N tree search test
+mcfunction test_tree_search
+switch @s tmp1 3
+  case 0
+    switch @s tmp2
+      case ..-1
+        say value is ${range}.
+      case 0..9
+        say value is ${range}.
+      case 10..19
+        say value is ${range}.
+      case 20..29
+        say value is ${range}.
+      case 30..
+        say value is ${range}.
+  case 1
+    say value is ${range}.
+  case 2
+    say value is ${range}.
+  case 3..5
+    say value is ${range}.
+  case 6
+    say value is ${range}.
+  case 7
+    say value is ${range}.
+  case 8
+    say value is ${range}.
+  case 9
+    say value is ${range}.
+  case 10
+    say value is ${range}.

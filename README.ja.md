@@ -100,9 +100,16 @@ say Mojang.
 ### switch and case
 ``switch`` と ``case`` 及びその内部ブロックをN分探索木として展開します。
 
-``switch targets objective n``
+```mcfunction
+switch Targets Objective N
+  case ..
+    Block
+  case ..
+    Block
+  ..
+```
 
-``n`` を省略した場合はデフォルト値の 2 (二分探索)が使われます。
+``N`` を省略した場合はデフォルト値の 2 (二分探索)が使われます。
 
 ```mcfunction
 switch @s tmp
@@ -115,7 +122,7 @@ switch @s tmp
 ```
 
 注意点
-* ``case`` の値は小さい値から大きい値に順序づけてされている必要があります。
+* ``case`` の値は小さい値から大きい値に順序づけされている必要があります。
 * 再帰できません。
 * ブロック内部でスコアを変更したい場合は値のコピーを作成する必要があります。
 

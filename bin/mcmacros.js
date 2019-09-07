@@ -205,8 +205,12 @@ class Preprocessor {
     const directives = this.cx.directives
 
     block.forEach(node => {
-      if (node.execute) {
-        this.cx.append('execute ' + node.execute.words + ' run ')
+      if (node.execute && node.command) {
+        if (node.command) {
+          this.cx.append('execute ' + node.execute.words + ' run ')
+        } else {
+          this.cx.appendLine('execute ' + node.execute.words)
+        }
       }
       const dir = directives[node.command]
       if (dir) {
@@ -297,20 +301,25 @@ class Preprocessor {
     const tokens = this.parser.parse(line)
     const head = tokens[0]
     if (head === 'execute') {
-      const index = tokens.indexOf('run')
+      const index = tokens.lastIndexOf('run')
+      node.execute = {}
       if (index > -1) {
         // check an error.
-        node.execute = {}
         node.execute.args = tokens.slice(1, index)
         node.execute.words = node.execute.args.join(' ')
         node.command = tokens[index + 1]
         node.args = tokens.slice(index + 2)
+      } else {
+        node.execute.args = tokens.slice(1)
+        node.execute.words = node.execute.args.join(' ')
       }
     } else {
       node.command = head
       node.args = tokens.slice(1)
     }
-    node.words = node.args.join(' ')
+    if (node.args) {
+      node.words = node.args.join(' ')
+    }
     return node
   }
 

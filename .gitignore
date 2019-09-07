@@ -62,3 +62,6 @@ typings/
 
 # test outputs
 /test/out/*
+
+# working
+/work/*
